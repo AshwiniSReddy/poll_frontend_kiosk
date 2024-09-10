@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  /* background-image: url(./science.png); */
+  overflow: hidden;
 }
 
 .App-logo {
