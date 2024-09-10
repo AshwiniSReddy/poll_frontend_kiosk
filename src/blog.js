@@ -43,23 +43,26 @@ function QuestionCard({ question }) {
       console.error("Failed to cast vote:", error);
     }
   };
-
+  const totalVotes = votes.option1Votes + votes.option2Votes;
+  const option1Percentage = totalVotes === 0 ? 0 : (votes.option1Votes / totalVotes) * 100;
+  console.log(option1Percentage, "ooptionq")
+  const option2Percentage = totalVotes === 0 ? 0 : (votes.option2Votes / totalVotes) * 100;
   useEffect(() => {
     const votedQuestions = JSON.parse(localStorage.getItem("votedQuestions")) || [];
     if (votedQuestions.includes(question._id)) {
       setShowResults(true); // Do not show options if already voted
     }
-  }, [question._id]);
 
-  const totalVotes = votes.option1Votes + votes.option2Votes;
-  const option1Percentage = totalVotes === 0 ? 0 : (votes.option1Votes / totalVotes) * 100;
-  console.log(option1Percentage, "ooptionq")
-  const option2Percentage = totalVotes === 0 ? 0 : (votes.option2Votes / totalVotes) * 100;
+    setoption1greater(option1Percentage > option2Percentage);
+    setoption2greater(option2Percentage > option1Percentage);
 
+  }, [question._id,votes]);
 
+ 
+  
 
   return (
-    <Box p={10} borderWidth="1px" bg="whiteAlpha.900" display="flex" flexDirection="column" alignItems="baseline" width="50%" gap={10}>
+    <Box p={10} borderWidth="1px"  display="flex" flexDirection="column" alignItems="baseline" width="50%" gap={2}>
       <Text fontWeight="600" mb={4} color="#113343">
         {question.question}
       </Text>
@@ -123,14 +126,25 @@ function QuestionCard({ question }) {
         </ButtonGroup>
       ) : (
         <Box mt={4} boxShadow="5px 10px #2f5d72" width="100%" bg="white" color="#113343" borderRadius="5" p={8} borderColor="#7d9aa7" borderWidth="2px" borderStyle="solid">
-          <Progress
-            value="40"
+       {option1greater ? <Progress
+            value={option1Percentage}
             size="lg"
             height="24px"
+            hasStripe={true}
             mt={2}
             colorScheme={option1Percentage > option2Percentage ? "blue" : "green"} // Use color scheme based on comparison
 
-          />
+          />:<Progress
+          value={option2Percentage}
+          size="lg"
+          height="24px"
+          hasStripe={true}
+          mt={2}
+          colorScheme={option1Percentage > option2Percentage ? "blue" : "green"} // Use color scheme based on comparison
+
+        />} 
+
+
 
           {/* <Progress colorScheme='green' height='32px' value={20} /> */}
 
@@ -174,14 +188,16 @@ function QuestionsContainer() {
 
   return (
     <Box
-      bgImage="url('./science.png')" // Add your image URL here
+     
       bgSize="cover"
       bgPosition="center"
       minH="100vh"
+      width="100vw"
       p={8}
-      gap="100px"
+    
+   
     >
-      <VStack spacing={4} bg="whiteAlpha.800" p={8} borderRadius="md" shadow="lg">
+      <VStack spacing={4}  p={8}>
         <Heading as="h1" size="xl" mb={4} color="#113343">
           Questions of the Day
         </Heading>
